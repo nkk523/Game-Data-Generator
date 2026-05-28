@@ -1,0 +1,54 @@
+功能一：防编号重复
+	
+	使用 EPPlus 库的 ConditionalFormatting 功能，结合 Excel 的 COUNTIF 函数，实现了输入重复 ID 	自动标红预警。
+
+
+	代码：
+	var range = worksheet.Cells["A2:A1000"];
+
+	var rule = range.ConditionalFormatting.AddExpression();          //表达式制定规则
+	rule .Formula=$"COUNTIF($A$2:$A$1000,A2)>1";                     //满足出现次数大于一
+	rule.Style.Fill.BackgroundColor.Color=Color.Red;                 //满足规则则标红背景
+	
+
+
+功能二：数据录入规范
+
+
+	为“道具类型”列添加了数据验证（Data Validation），限制只能选择预设的“消耗品/装备/材料”，	防止人工填错。
+
+	代码：
+	var validation = worksheet.DataValidations.AddListValidation("C2:C1000");  //指定列
+	validation.Formula.Values.Add("消耗品");                                   //三个选项
+	validation.Formula.Values.Add("装备"); 
+	validation.Formula.Values.Add("材料");
+
+
+
+功能三：下拉菜单＋稀有度标记区分
+
+	为“稀有度”列添加了数据验证（Data Validation），限制只能选择预设的“五星/四星/三星”，且会	根据选择结果，对单元格格式背景填充和字体颜色改变，使得高价值物品可视化
+
+
+	代码：var validation1 = worksheet.DataValidations.AddListValidation("E2:E1000");
+	validation1.Formula.Values.Add("五星");
+	validation1.Formula.Values.Add("四星");
+	validation1.Formula.Values.Add("三星");
+
+
+	var range1=worksheet.Cells["E2:E1000"];
+	var rule1=range1.ConditionalFormatting.AddExpression();         //五星稀有度
+	rule1.Formula = "E2=\"五星\"";
+	rule1.Style.Fill.BackgroundColor.Color=Color.Red;
+	rule1.Style.Font.Color.Color=Color.Gold;
+
+	var rule2=range1.ConditionalFormatting.AddExpression();         //四星稀有度
+	rule2.Formula = "E2=\"四星\"";
+	rule2 .Style.Fill.BackgroundColor.Color = Color.Pink;
+	rule2.Style.Font.Color.Color=Color.Black;
+
+	var rule3=range1.ConditionalFormatting.AddExpression();         //三星稀有度
+	rule3.Formula = "E2=\"三星\"";
+	rule3.Style.Fill.BackgroundColor.Color=Color.Blue;
+	rule3 .Style.Font.Color.Color = Color.White;
+
